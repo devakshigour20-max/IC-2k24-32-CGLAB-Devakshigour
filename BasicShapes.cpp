@@ -1,131 +1,62 @@
 #include <SDL.h>
-#include <iostream>
 
-// Draw a circle using the Midpoint Circle Algorithm
-void drawCircle(SDL_Renderer* renderer, int xc, int yc, int radius)
+// Midpoint Circle Algorithm
+void drawCircle(SDL_Renderer* r, int xc, int yc, int radius)
 {
-    int x = 0;
-    int y = radius;
-    int decision = 1 - radius;
-
+    int x = 0, y = radius, d = 1 - radius;   // d = decision parameter
     while (x <= y)
     {
-        SDL_RenderDrawPoint(renderer, xc + x, yc + y);
-        SDL_RenderDrawPoint(renderer, xc - x, yc + y);
-        SDL_RenderDrawPoint(renderer, xc + x, yc - y);
-        SDL_RenderDrawPoint(renderer, xc - x, yc - y);
-        SDL_RenderDrawPoint(renderer, xc + y, yc + x);
-        SDL_RenderDrawPoint(renderer, xc - y, yc + x);
-        SDL_RenderDrawPoint(renderer, xc + y, yc - x);
-        SDL_RenderDrawPoint(renderer, xc - y, yc - x);
+        // ek point se 8 points (symmetry)
+        SDL_RenderDrawPoint(r, xc + x, yc + y);
+        SDL_RenderDrawPoint(r, xc - x, yc + y);
+        SDL_RenderDrawPoint(r, xc + x, yc - y);
+        SDL_RenderDrawPoint(r, xc - x, yc - y);
+        SDL_RenderDrawPoint(r, xc + y, yc + x);
+        SDL_RenderDrawPoint(r, xc - y, yc + x);
+        SDL_RenderDrawPoint(r, xc + y, yc - x);
+        SDL_RenderDrawPoint(r, xc - y, yc - x);
 
         x++;
-
-        if (decision < 0)
-        {
-            decision += 2 * x + 1;
-        }
+        if (d < 0)
+            d += 2 * x + 1;                  // y wahi rahega
         else
         {
-            y--;
-            decision += 2 * (x - y) + 1;
+            y--;                             // y ek kam
+            d += 2 * (x - y) + 1;
         }
     }
 }
 
 int main(int argc, char* argv[])
 {
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-        std::cout << "SDL Error: " << SDL_GetError();
-        return 1;
-    }
+    SDL_Init(SDL_INIT_VIDEO);                                    // graphics shuru
+    SDL_Window* window = SDL_CreateWindow("Basic Shapes", SDL_WINDOWPOS_CENTERED,
+                         SDL_WINDOWPOS_CENTERED, 900, 650, SDL_WINDOW_SHOWN);
+    SDL_Renderer* r = SDL_CreateRenderer(window, -1, 0);        // drawing tool
 
-    // Create graphics window
-    SDL_Window* window = SDL_CreateWindow(
-        "Computer Graphics Lab - Assignment 1",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        900, 650,
-        SDL_WINDOW_SHOWN
-    );
+    SDL_SetRenderDrawColor(r, 255, 255, 255, 255);              // white background
+    SDL_RenderClear(r);
 
-    if (window == nullptr)
-    {
-        std::cout << "Window Error: " << SDL_GetError();
-        SDL_Quit();
-        return 1;
-    }
+    SDL_SetRenderDrawColor(r, 0, 0, 255, 255);                  // blue
+    SDL_RenderDrawLine(r, 100, 130, 350, 130);                  // line
 
-    // Create renderer
-    SDL_Renderer* renderer = SDL_CreateRenderer(
-        window, -1, SDL_RENDERER_ACCELERATED
-    );
+    SDL_SetRenderDrawColor(r, 255, 0, 0, 255);                  // red
+    drawCircle(r, 650, 130, 70);                                // circle
 
-    if (renderer == nullptr)
-    {
-        renderer = SDL_CreateRenderer(
-            window, -1, SDL_RENDERER_SOFTWARE
-        );
-    }
+    SDL_SetRenderDrawColor(r, 0, 150, 0, 255);                  // green
+    SDL_Rect rect = {150, 300, 220, 140};                       // x, y, width, height
+    SDL_RenderDrawRect(r, &rect);                               // rectangle
 
-    if (renderer == nullptr)
-    {
-        std::cout << "Renderer Error: " << SDL_GetError();
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
+    SDL_SetRenderDrawColor(r, 150, 0, 150, 255);                // purple
+    SDL_RenderDrawLine(r, 550, 440, 680, 280);                  // triangle: 3 lines
+    SDL_RenderDrawLine(r, 680, 280, 810, 440);
+    SDL_RenderDrawLine(r, 810, 440, 550, 440);
 
-    // Set white background
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderClear(renderer);
+    SDL_RenderPresent(r);                                       // screen pe dikhao
 
-    // 1. Draw a straight line (Blue)
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL_RenderDrawLine(renderer, 100, 130, 350, 130);
+    SDL_Event e;
+    while (SDL_WaitEvent(&e) && e.type != SDL_QUIT);            // window band hone tak ruko
 
-    // 2. Draw a circle using Midpoint Circle Algorithm (Red)
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    drawCircle(renderer, 650, 130, 70);
-
-    // 3. Draw a rectangle (Green)
-    SDL_SetRenderDrawColor(renderer, 0, 150, 0, 255);
-    SDL_Rect rectangle = {150, 300, 220, 140};
-    SDL_RenderDrawRect(renderer, &rectangle);
-
-    // 4. Draw a triangle (Purple)
-    SDL_SetRenderDrawColor(renderer, 150, 0, 150, 255);
-    SDL_RenderDrawLine(renderer, 550, 440, 680, 280);
-    SDL_RenderDrawLine(renderer, 680, 280, 810, 440);
-    SDL_RenderDrawLine(renderer, 810, 440, 550, 440);
-
-    // Display all shapes
-    SDL_RenderPresent(renderer);
-
-    std::cout << "All four shapes drawn successfully!" << std::endl;
-    std::cout << "Close the graphics window to exit." << std::endl;
-
-    // Keep window open until user closes it
-    SDL_Event event;
-    bool running = true;
-
-    while (running)
-    {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-            {
-                running = false;
-            }
-        }
-    }
-
-    // Clean up resources
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
     SDL_Quit();
-
     return 0;
 }
