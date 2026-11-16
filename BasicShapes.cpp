@@ -18,10 +18,10 @@ void drawCircle(SDL_Renderer* r, int xc, int yc, int radius)
 
         x++;
         if (d < 0)
-            d += 2 * x + 1;                  // y wahi rahega
+            d += 2 * x + 1;                  
         else
         {
-            y--;                             // y ek kam
+            y--;                             
             d += 2 * (x - y) + 1;
         }
     }
@@ -29,7 +29,7 @@ void drawCircle(SDL_Renderer* r, int xc, int yc, int radius)
 
 int main(int argc, char* argv[])
 {
-    SDL_Init(SDL_INIT_VIDEO);                                    // graphics shuru
+    SDL_Init(SDL_INIT_VIDEO);                                    
     SDL_Window* window = SDL_CreateWindow("Basic Shapes", SDL_WINDOWPOS_CENTERED,
                          SDL_WINDOWPOS_CENTERED, 900, 650, SDL_WINDOW_SHOWN);
     SDL_Renderer* r = SDL_CreateRenderer(window, -1, 0);        // drawing tool
@@ -52,11 +52,11 @@ int main(int argc, char* argv[])
     SDL_RenderDrawLine(r, 680, 280, 810, 440);
     SDL_RenderDrawLine(r, 810, 440, 550, 440);
 
-    SDL_RenderPresent(r);                                       // screen pe dikhao
+    SDL_RenderPresent(r);                                       
 
     SDL_Event e;
-    while (SDL_WaitEvent(&e) && e.type != SDL_QUIT);            // window band hone tak ruko
-
+    while (SDL_WaitEvent(&e) && e.type != SDL_QUIT);            
+    
     SDL_Quit();
     return 0;
 }
