@@ -15,34 +15,34 @@ int main(int argc, char* argv[])
     // DDA calculation
     int dx = x2 - x1;
     int dy = y2 - y1;
-    int steps = max(abs(dx), abs(dy));      // jis taraf zyada change, utne steps
-    float xInc = (float)dx / steps;         // har step me x kitna badhe
-    float yInc = (float)dy / steps;         // har step me y kitna badhe
+    int steps = max(abs(dx), abs(dy));     
+    float xInc = (float)dx / steps;        
+    float yInc = (float)dy / steps;        
 
     cout << "dx = " << dx << ", dy = " << dy << ", steps = " << steps << endl;
     cout << "xInc = " << xInc << ", yInc = " << yInc << endl;
 
-    SDL_Init(SDL_INIT_VIDEO);               // graphics shuru
+    SDL_Init(SDL_INIT_VIDEO);               
     SDL_Window* window = SDL_CreateWindow("DDA Line", SDL_WINDOWPOS_CENTERED,
                          SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
     SDL_Renderer* r = SDL_CreateRenderer(window, -1, 0);
 
-    SDL_SetRenderDrawColor(r, 255, 255, 255, 255);   // white background
+    SDL_SetRenderDrawColor(r, 255, 255, 255, 255);  
     SDL_RenderClear(r);
-    SDL_SetRenderDrawColor(r, 0, 0, 255, 255);       // blue line
+    SDL_SetRenderDrawColor(r, 0, 0, 255, 255);       
 
     float x = x1, y = y1;
     for (int i = 0; i <= steps; i++)
     {
-        SDL_RenderDrawPoint(r, round(x), round(y));  // pixel plot
+        SDL_RenderDrawPoint(r, round(x), round(y));  
         x += xInc;
         y += yInc;
     }
 
-    SDL_RenderPresent(r);                            // screen pe dikhao
+    SDL_RenderPresent(r);                            
 
     SDL_Event e;
-    while (SDL_WaitEvent(&e) && e.type != SDL_QUIT); // window band hone tak ruko
+    while (SDL_WaitEvent(&e) && e.type != SDL_QUIT); 
 
     SDL_Quit();
     return 0;
